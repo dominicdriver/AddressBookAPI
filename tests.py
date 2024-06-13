@@ -21,7 +21,11 @@ class TestAPI(unittest.TestCase):
         # TODO
         self.fail("Not implemented")
 
-    def test_delete_record(self):
+    def test_delete_specific_record(self):
+        # TODO
+        self.fail("Not implemented")
+
+    def test_delete_matching_records(self):
         # TODO
         self.fail("Not implemented")
 

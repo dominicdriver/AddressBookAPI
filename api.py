@@ -6,10 +6,6 @@ class AddressBookAPI:
     def __init__(self, database_path: str) -> None:
         self.database_path = database_path
 
-    def read_records(self) -> list[AddressBookRecord]:
-        # TODO
-        pass
-
     def add_record(self, new_record: AddressBookRecord) -> AddressBookRecord:
         # TODO
         pass
@@ -18,11 +14,16 @@ class AddressBookAPI:
         # TODO
         pass
 
-    def delete_record(self, record_to_delete: AddressBookRecord) -> AddressBookRecord:
+    def delete_specfic_record(self, record_to_delete: AddressBookRecord) -> AddressBookRecord:
         # TODO
         pass
 
-    def list_record(self) -> list[AddressBookRecord]:
+    def delete_matching_records(self, first_name: str = "", last_name: str = "",
+                       phone: str = "", email: str = "") -> list[AddressBookRecord]:
+        # TODO
+        pass
+
+    def list_records(self) -> list[AddressBookRecord]:
         # TODO
         pass
 
