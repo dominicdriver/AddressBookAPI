@@ -1,5 +1,5 @@
-from api import AddressBookAPI, AddressBookRecord
-from record import AddressBookRecordEncoder, AddressBookRecordDecoder
+from api import AddressBookAPI
+from record import AddressBookRecord, AddressBookRecordEncoder, AddressBookRecordDecoder
 import unittest
 import json
 
