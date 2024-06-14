@@ -10,7 +10,8 @@ class AddressBookAPI:
         # TODO
         pass
 
-    def edit_record(self, old_record: AddressBookRecord, edited_record: AddressBookRecord) -> AddressBookRecord:
+    def edit_record(self, old_record: AddressBookRecord, new_first_name: str = "", new_last_name: str = "",
+                    new_phone: str = "", new_email: str = "") -> AddressBookRecord:
         # TODO
         pass
 
