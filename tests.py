@@ -11,13 +11,13 @@ class TestAPI(unittest.TestCase):
     ADDRESS_BOOK_FILE_PATH = "test_address_book.json"
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.api = AddressBookAPI(cls.ADDRESS_BOOK_FILE_PATH)
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.setup_database()
 
-    def setup_database(self):
+    def setup_database(self) -> None:
         """
         Clears out the database and adds a few example records
         """
@@ -31,18 +31,21 @@ class TestAPI(unittest.TestCase):
         with open(self.ADDRESS_BOOK_FILE_PATH, "w") as database_file:
             json.dump(test_records, database_file, indent=4, cls=AddressBookRecordEncoder)
 
-    def read_records_from_database(self):
+    def read_records_from_database(self) -> list[AddressBookRecord]:
         with open(self.ADDRESS_BOOK_FILE_PATH) as database_file:
             return json.load(database_file, cls=AddressBookRecordDecoder)
         
-    def add_record_to_database(self, record: AddressBookRecord):
+    def add_record_to_database(self, record: AddressBookRecord) -> None:
         records = self.read_records_from_database()
         records.append(record)
 
         with open(self.ADDRESS_BOOK_FILE_PATH, "w") as database_file:
             json.dump(records, database_file, indent=4, cls=AddressBookRecordEncoder)
 
-    def test_add_single_record(self):
+    def test_add_single_record(self) -> None:
+        """
+        Tests that a record can be added to the database
+        """
         record_to_add = AddressBookRecord("Chesney", "Brown", "01913606138", "chesney.brown@corrie.co.uk")
         self.api.add_record(record_to_add)
 
@@ -50,7 +53,10 @@ class TestAPI(unittest.TestCase):
 
         self.assertIn(record_to_add, database_records)
 
-    def test_add_multiple_records(self):
+    def test_add_multiple_records(self) -> None:
+        """
+        Tests that multiple records can be added to the database
+        """
         records_to_add = [
             AddressBookRecord("Chesney", "Brown", "01913606138", "chesney.brown@corrie.co.uk"),
             AddressBookRecord("Sharon", "Watts", "01895532162", "sharon.watts@ee.com"),
@@ -65,7 +71,10 @@ class TestAPI(unittest.TestCase):
         for record in records_to_add:
             self.assertIn(record, database_records)
 
-    def test_edit_record(self):
+    def test_edit_record(self) -> None:
+        """
+        Tests that an existing record can be edited
+        """
         new_phone_number = "01913633216"
         record_to_edit = AddressBookRecord("Chesney", "Brown", "01913606138", "chesney.brown@corrie.co.uk")
         edited_record = AddressBookRecord("Chesney", "Brown", new_phone_number, "chesney.brown@corrie.co.uk")
@@ -78,7 +87,10 @@ class TestAPI(unittest.TestCase):
         self.assertIn(edited_record, records_after_edit)
         self.assertNotIn(record_to_edit, records_after_edit)
 
-    def test_delete_specific_record(self):
+    def test_delete_specific_record(self) -> None:
+        """
+        Tests that a record can be deleted from the database
+        """
         record_to_delete = AddressBookRecord("Chesney", "Brown", "01913606138", "chesney.brown@corrie.co.uk")
 
         self.add_record_to_database(record_to_delete)
@@ -88,7 +100,10 @@ class TestAPI(unittest.TestCase):
 
         self.assertNotIn(record_to_delete, records_after_delete)
 
-    def test_delete_matching_records(self):
+    def test_delete_matching_records(self) -> None:
+        """
+        Tests that records with a matching field can be deleted
+        """
         test_records = [
             AddressBookRecord("Phil", "Mitchell", "01895521739", "phil.mitchell@ee.co.uk"),
             AddressBookRecord("Billy", "Mitchell", "01895521732", "billy.mitchell@ee.co.uk")
@@ -104,13 +119,19 @@ class TestAPI(unittest.TestCase):
         for record in test_records:
             self.assertNotIn(record, records_after_delete)
 
-    def test_list_records(self):
+    def test_list_records(self) -> None:
+        """
+        Tests that all records can be retrieved
+        """
         database_records = self.read_records_from_database()
         api_records = self.api.list_records()
 
         self.assertListEqual(database_records, api_records)
 
-    def test_search_records(self):
+    def test_search_records(self) -> None:
+        """
+        Tests that the database can be searched
+        """
         search_first_name = "Billy"
 
         test_records = [
@@ -130,7 +151,7 @@ class TestAPIEndpoints(unittest.TestCase):
     ADDRESS_BOOK_FILE_PATH = "test_address_book.json"
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         """
         Creates a FastAPIWrapper with the test database
         Creates an HTTP client that the tests can use to interact with API endpoints.
@@ -138,10 +159,10 @@ class TestAPIEndpoints(unittest.TestCase):
         cls.fast_api_app = FastAPIWrapper(cls.ADDRESS_BOOK_FILE_PATH)
         cls.test_client = TestClient(cls.fast_api_app.app)
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.setup_database()
 
-    def setup_database(self):
+    def setup_database(self) -> None:
         """
         Clears out the database and adds a few example records
         """
@@ -155,18 +176,18 @@ class TestAPIEndpoints(unittest.TestCase):
         with open(self.ADDRESS_BOOK_FILE_PATH, "w") as database_file:
             json.dump(self.test_records, database_file, indent=4, cls=AddressBookRecordEncoder)
 
-    def read_records_from_database(self):
+    def read_records_from_database(self) -> list[AddressBookRecord]:
         with open(self.ADDRESS_BOOK_FILE_PATH) as database_file:
             return json.load(database_file, cls=AddressBookRecordDecoder)
         
-    def add_record_to_database(self, record: AddressBookRecord):
+    def add_record_to_database(self, record: AddressBookRecord) -> None:
         records = self.read_records_from_database()
         records.append(record)
 
         with open(self.ADDRESS_BOOK_FILE_PATH, "w") as database_file:
             json.dump(records, database_file, indent=4, cls=AddressBookRecordEncoder)
 
-    def test_add_record_endpoint(self):
+    def test_add_record_endpoint(self) -> None:
         """
         Tests that the API can add a new record
         """
@@ -176,7 +197,7 @@ class TestAPIEndpoints(unittest.TestCase):
 
         self.assertEqual(record_to_add, AddressBookRecord(**response.json()))
 
-    def test_edit_record_endpoint(self):
+    def test_edit_record_endpoint(self) -> None:
         """
         Tests that the API can edit an existing record
         """
@@ -190,7 +211,7 @@ class TestAPIEndpoints(unittest.TestCase):
 
         self.assertEqual(expected_response_record, AddressBookRecord(**response.json()))
 
-    def test_delete_specific_record_endpoint(self):
+    def test_delete_specific_record_endpoint(self) -> None:
         """
         Tests that the API can delete a specific record
         """
@@ -201,7 +222,7 @@ class TestAPIEndpoints(unittest.TestCase):
 
         self.assertEqual(record_to_delete, AddressBookRecord(**response.json()))
 
-    def test_delete_matching_record_endpoint(self):
+    def test_delete_matching_record_endpoint(self) -> None:
         """
         Tests that the API can delete records with a matching field
         """
@@ -219,7 +240,7 @@ class TestAPIEndpoints(unittest.TestCase):
 
         self.assertListEqual(matching_records, response_records)
 
-    def test_list_records_endpoint(self):
+    def test_list_records_endpoint(self) -> None:
         """
         Tests that the the API can return all records
         """
@@ -230,7 +251,7 @@ class TestAPIEndpoints(unittest.TestCase):
 
         self.assertListEqual(all_records, response_records)
 
-    def test_search_records_endpoint(self):
+    def test_search_records_endpoint(self) -> None:
         """
         Tests that the API can find matching records
         """

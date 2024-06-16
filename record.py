@@ -1,4 +1,5 @@
 from dataclasses import dataclass, asdict
+from typing import Any
 import json
 
 
@@ -13,7 +14,7 @@ class AddressBookRecord:
 
 class AddressBookRecordEncoder(json.JSONEncoder):
     """Encodes an AddressBookRecord into JSON by converting it to a dictionary"""
-    def default(self, obj):
+    def default(self, obj) -> dict | Any:
         if isinstance(obj, AddressBookRecord):
             return asdict(obj)
         return super().default(obj)
@@ -21,8 +22,8 @@ class AddressBookRecordEncoder(json.JSONEncoder):
 
 class AddressBookRecordDecoder(json.JSONDecoder):
     """Decodes a JSON object into an AddressBookRecord object"""
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(object_hook=self.object_hook, *args, **kwargs)
 
-    def object_hook(self, obj):
+    def object_hook(self, obj) -> AddressBookRecord:
         return AddressBookRecord(**obj)
