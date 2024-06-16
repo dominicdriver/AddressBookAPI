@@ -94,7 +94,7 @@ class TestAPI(unittest.TestCase):
         record_to_delete = AddressBookRecord("Chesney", "Brown", "01913606138", "chesney.brown@corrie.co.uk")
 
         self.add_record_to_database(record_to_delete)
-        self.api.delete_specfic_record(record_to_delete)
+        self.api.delete_specific_record(record_to_delete)
 
         records_after_delete = self.read_records_from_database()
 
@@ -242,7 +242,7 @@ class TestAPIEndpoints(unittest.TestCase):
 
     def test_list_records_endpoint(self) -> None:
         """
-        Tests that the the API can return all records
+        Tests that the API can return all records
         """
         all_records = self.read_records_from_database()
 
@@ -264,7 +264,7 @@ class TestAPIEndpoints(unittest.TestCase):
 
         for record in test_records:
             self.add_record_to_database(record)
-        
+
         response = self.test_client.request("GET", ENDPOINTS["search_records"], json={"first_name": search_first_name})
         response_records = [AddressBookRecord(**record) for record in response.json()]
 

@@ -8,25 +8,26 @@ ENDPOINTS = {
     "add_record": "/add_record",
     "edit_record": "/edit_record",
     "delete_specific_record": "/delete_record",
-    "delete_matching_record": "/delete_matching_record",
+    "delete_matching_records": "/delete_matching_records",
     "list_records": "/list_records",
     "search_records": "/search_records"
 }
 
 ADDRESS_BOOK_FILE_PATH = "address_book.json"
-    
+
+
 class FastAPIWrapper:
     """
     A wrapper that contains an instance of FastAPI and the API used to interact with the database
     """
     def __init__(self, database_file_path: str) -> None:
-        self.app = FastAPI()
+        self.app = FastAPI(title="Address Book API")
         self.api = AddressBookAPI(database_file_path)
 
         self.app.add_api_route(ENDPOINTS["add_record"], endpoint=self.add_record_endpoint, methods=["POST"])
         self.app.add_api_route(ENDPOINTS["edit_record"], endpoint=self.edit_record_endpoint, methods=["POST"])
         self.app.add_api_route(ENDPOINTS["delete_specific_record"], endpoint=self.delete_specific_record_endpoint, methods=["DELETE"])
-        self.app.add_api_route(ENDPOINTS["delete_matching_record"], endpoint=self.delete_matching_record_endpoint, methods=["DELETE"])
+        self.app.add_api_route(ENDPOINTS["delete_matching_records"], endpoint=self.delete_matching_records_endpoint, methods=["DELETE"])
         self.app.add_api_route(ENDPOINTS["list_records"], endpoint=self.list_records_endpoint, methods=["GET"])
         self.app.add_api_route(ENDPOINTS["search_records"], endpoint=self.search_records_endpoint, methods=["GET"])
 
@@ -34,7 +35,7 @@ class FastAPIWrapper:
         api_result = self.api.add_record(record_to_add)
 
         return api_result
-    
+
     def edit_record_endpoint(self, record_to_edit: AddressBookRecord, new_first_name: Annotated[str, Body()] = "",
                              new_last_name: Annotated[str, Body()] = "", new_phone: Annotated[str, Body()] = "",
                              new_email: Annotated[str, Body()] = "") -> AddressBookRecord | None:
@@ -44,17 +45,18 @@ class FastAPIWrapper:
         return api_result
 
     def delete_specific_record_endpoint(self, record_to_delete: AddressBookRecord) -> AddressBookRecord | None:
-        api_result = self.api.delete_specfic_record(record_to_delete)
+        api_result = self.api.delete_specific_record(record_to_delete)
 
         return api_result
-    
-    def delete_matching_record_endpoint(self, first_name: Annotated[str, Body()] = "", last_name: Annotated[str, Body()] = "",
-                                        phone: Annotated[str, Body()] = "", email: Annotated[str, Body()] = ""
+
+    def delete_matching_records_endpoint(self, first_name: Annotated[str, Body()] = "",
+                                         last_name: Annotated[str, Body()] = "",
+                                         phone: Annotated[str, Body()] = "", email: Annotated[str, Body()] = ""
                                         ) -> list[AddressBookRecord]:
         api_result = self.api.delete_matching_records(first_name, last_name, phone, email)
 
         return api_result
-    
+
     def search_records_endpoint(self, first_name: Annotated[str, Body()] = "", last_name: Annotated[str, Body()] = "",
                                 phone: Annotated[str, Body()] = "", email: Annotated[str, Body()] = ""
                                 ) -> list[AddressBookRecord]:

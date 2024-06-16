@@ -18,7 +18,7 @@ class AddressBookAPI:
         records.append(new_record)
 
         with open(self.database_path, "w") as database_file:
-            json.dump(records, database_file, cls=AddressBookRecordEncoder)
+            json.dump(records, database_file, indent=4, cls=AddressBookRecordEncoder)
 
         return new_record
 
@@ -45,10 +45,10 @@ class AddressBookAPI:
                     json.dump(records, database_file, indent=4, cls=AddressBookRecordEncoder)
 
                 return record
-            
+
         return None
 
-    def delete_specfic_record(self, record_to_delete: AddressBookRecord) -> AddressBookRecord | None:
+    def delete_specific_record(self, record_to_delete: AddressBookRecord) -> AddressBookRecord | None:
         """
         Trys to delete the specified records.
         Returns the record is successful, or None otherwise
@@ -64,7 +64,6 @@ class AddressBookAPI:
             json.dump(records, database_file, indent=4, cls=AddressBookRecordEncoder)
 
         return record_to_delete
-        
 
     def delete_matching_records(self, first_name: str = "", last_name: str = "",
                                 phone: str = "", email: str = "") -> list[AddressBookRecord]:
@@ -81,7 +80,7 @@ class AddressBookAPI:
                 or last_name == record.last_name
                 or phone == record.phone
                 or email == record.email):
-                
+
                 new_records.remove(record)
                 deleted_records.append(record)
 
@@ -95,7 +94,7 @@ class AddressBookAPI:
         Returns all records in the database
         """
         with open(self.database_path, "r") as database_file:
-           return json.load(database_file, cls=AddressBookRecordDecoder)
+            return json.load(database_file, cls=AddressBookRecordDecoder)
 
     def search_records(self, first_name: str = "", last_name: str = "",
                        phone: str = "", email: str = "") -> list[AddressBookRecord]:
@@ -107,7 +106,7 @@ class AddressBookAPI:
 
         for record in records:
             if (first_name == record.first_name
-                or last_name == record.last_name 
+                or last_name == record.last_name
                 or phone == record.phone
                 or email == record.email):
 
