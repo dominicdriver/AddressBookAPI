@@ -234,7 +234,7 @@ class TestAPIEndpoints(unittest.TestCase):
         for record in matching_records:
             self.add_record_to_database(record)
 
-        response = self.test_client.request("DELETE", ENDPOINTS["delete_matching_record"],
+        response = self.test_client.request("DELETE", ENDPOINTS["delete_matching_records"],
                                             json={"last_name": "Mitchell"})
         response_records = [AddressBookRecord(**record) for record in response.json()]
 
@@ -265,7 +265,7 @@ class TestAPIEndpoints(unittest.TestCase):
         for record in test_records:
             self.add_record_to_database(record)
 
-        response = self.test_client.request("GET", ENDPOINTS["search_records"], json={"first_name": search_first_name})
+        response = self.test_client.post(ENDPOINTS["search_records"], json={"first_name": search_first_name})
         response_records = [AddressBookRecord(**record) for record in response.json()]
 
         self.assertListEqual(test_records, response_records)

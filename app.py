@@ -26,10 +26,14 @@ class FastAPIWrapper:
 
         self.app.add_api_route(ENDPOINTS["add_record"], endpoint=self.add_record_endpoint, methods=["POST"])
         self.app.add_api_route(ENDPOINTS["edit_record"], endpoint=self.edit_record_endpoint, methods=["POST"])
+
         self.app.add_api_route(ENDPOINTS["delete_specific_record"], endpoint=self.delete_specific_record_endpoint, methods=["DELETE"])
         self.app.add_api_route(ENDPOINTS["delete_matching_records"], endpoint=self.delete_matching_records_endpoint, methods=["DELETE"])
+        
         self.app.add_api_route(ENDPOINTS["list_records"], endpoint=self.list_records_endpoint, methods=["GET"])
-        self.app.add_api_route(ENDPOINTS["search_records"], endpoint=self.search_records_endpoint, methods=["GET"])
+
+        # Ideally this would use GET, but some web browsers do not allow GET requests with a (json) body
+        self.app.add_api_route(ENDPOINTS["search_records"], endpoint=self.search_records_endpoint, methods=["POST"])
 
     def add_record_endpoint(self, record_to_add: AddressBookRecord) -> AddressBookRecord:
         api_result = self.api.add_record(record_to_add)

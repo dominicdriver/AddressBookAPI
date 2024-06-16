@@ -1,6 +1,6 @@
 from dataclasses import dataclass, asdict
 from typing import Any, Annotated
-from pydantic import StringConstraints
+from pydantic import StringConstraints, Field
 import json
 
 # From https://www.regular-expressions.info/email.html
@@ -10,10 +10,12 @@ EMAIL_REGEX = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 @dataclass
 class AddressBookRecord:
     """Holds information about an entry in the address book"""
-    first_name: Annotated[str, StringConstraints(pattern=r"[a-zA-Z]+")]
-    last_name: Annotated[str, StringConstraints(pattern=r"[a-zA-Z]+")]
-    phone: Annotated[str, StringConstraints(pattern=r"\d+")]
-    email: Annotated[str, StringConstraints(pattern=EMAIL_REGEX)]
+
+    # The Field object is only used by FastAPI to generate examples in the documentation page 
+    first_name: Annotated[str, Field(examples=["David"]), StringConstraints(pattern=r"[a-zA-Z]+")]
+    last_name: Annotated[str, Field(examples=["Platt"]), StringConstraints(pattern=r"[a-zA-Z]+")]
+    phone: Annotated[str, Field(examples=["01913478234"]), StringConstraints(pattern=r"\d+")]
+    email: Annotated[str, Field(examples=["david.platt@corrie.co.uk"]), StringConstraints(pattern=EMAIL_REGEX)]
 
 
 class AddressBookRecordEncoder(json.JSONEncoder):
