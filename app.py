@@ -31,31 +31,39 @@ class FastAPIWrapper:
         self.app.add_api_route(ENDPOINTS["search_records"], endpoint=self.search_records_endpoint, methods=["GET"])
 
     def add_record_endpoint(self, record_to_add: AddressBookRecord):
-        # TODO
-        pass
+        api_result = self.api.add_record(record_to_add)
+
+        return api_result
+    
     def edit_record_endpoint(self, record_to_edit: AddressBookRecord, new_first_name: Annotated[str, Body()] = "",
                              new_last_name: Annotated[str, Body()] = "", new_phone: Annotated[str, Body()] = "",
                              new_email: Annotated[str, Body()] = ""):
-        # TODO
-        pass
+        api_result = self.api.edit_record(record_to_edit, new_first_name, new_last_name,
+                                          new_phone, new_email)
+
+        return api_result
 
     def delete_specific_record_endpoint(self, record_to_delete: AddressBookRecord):
-        # TODO
-        pass
+        api_result = self.api.delete_specfic_record(record_to_delete)
+
+        return api_result
     
     def delete_matching_record_endpoint(self, first_name: Annotated[str, Body()] = "", last_name: Annotated[str, Body()] = "",
                                         phone: Annotated[str, Body()] = "", email: Annotated[str, Body()] = ""):
-        # TODO
-        pass
+        api_result = self.api.delete_matching_records(first_name, last_name, phone, email)
+
+        return api_result
     
     def search_records_endpoint(self, first_name: Annotated[str, Body()] = "", last_name: Annotated[str, Body()] = "",
                                 phone: Annotated[str, Body()] = "", email: Annotated[str, Body()] = ""):
-        # TODO
-        pass
+        api_result = self.api.search_records(first_name, last_name, phone, email)
+
+        return api_result
 
     def list_records_endpoint(self):
-        # TODO
-        pass
+        api_result = self.api.list_records()
+
+        return api_result
 
 
 fast_api = FastAPIWrapper(ADDRESS_BOOK_FILE_PATH)
