@@ -124,7 +124,7 @@ class TestAPI(unittest.TestCase):
         Tests that all records can be retrieved
         """
         database_records = self.read_records_from_database()
-        api_records = self.api.list_records()
+        api_records = self.api.list_records().data
 
         self.assertListEqual(database_records, api_records)
 
@@ -142,7 +142,9 @@ class TestAPI(unittest.TestCase):
         for record in test_records:
             self.add_record_to_database(record)
         
-        found_records = self.api.search_records(first_name=search_first_name)
+        found_records = self.api.search_records(first_name=search_first_name).data
+
+        self.assertListEqual(test_records, found_records)
 
         self.assertListEqual(test_records, found_records)
 

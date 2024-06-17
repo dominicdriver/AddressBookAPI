@@ -1,7 +1,8 @@
-from api import AddressBookAPI
+from api import AddressBookAPI, ResponseCode
 from record import AddressBookRecord
 from typing import Annotated
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, status
+from fastapi.responses import JSONResponse
 import uvicorn
 
 ENDPOINTS = {
@@ -35,23 +36,38 @@ class FastAPIWrapper:
         # Ideally this would use GET, but some web browsers do not allow GET requests with a (json) body
         self.app.add_api_route(ENDPOINTS["search_records"], endpoint=self.search_records_endpoint, methods=["POST"])
 
-    def add_record_endpoint(self, record_to_add: AddressBookRecord) -> AddressBookRecord:
+    def add_record_endpoint(self, record_to_add: AddressBookRecord) -> JSONResponse:
         api_result = self.api.add_record(record_to_add)
 
-        return api_result
+        match api_result.response_code:
+            case ResponseCode.ALREADY_EXISTS:
+                return JSONResponse(status_code=status.HTTP_409_CONFLICT,
+                                    content={"msg": "Record already in database"})
+            case ResponseCode.OK:
+                return api_result.data
 
     def edit_record_endpoint(self, record_to_edit: AddressBookRecord, new_first_name: Annotated[str, Body()] = "",
                              new_last_name: Annotated[str, Body()] = "", new_phone: Annotated[str, Body()] = "",
-                             new_email: Annotated[str, Body()] = "") -> AddressBookRecord | None:
+                             new_email: Annotated[str, Body()] = "") -> JSONResponse:
         api_result = self.api.edit_record(record_to_edit, new_first_name, new_last_name,
                                           new_phone, new_email)
+        
+        match api_result.response_code:
+            case ResponseCode.NOT_FOUND:
+                return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,
+                                    content={"msg": "Record not found"})
+            case ResponseCode.OK:
+                return api_result.data
 
-        return api_result
-
-    def delete_specific_record_endpoint(self, record_to_delete: AddressBookRecord) -> AddressBookRecord | None:
+    def delete_specific_record_endpoint(self, record_to_delete: AddressBookRecord) -> JSONResponse:
         api_result = self.api.delete_specific_record(record_to_delete)
 
-        return api_result
+        match api_result.response_code:
+            case ResponseCode.NOT_FOUND:
+                return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,
+                                    content={"msg": "Record not found"})
+            case ResponseCode.OK:
+                return api_result.data
 
     def delete_matching_records_endpoint(self, first_name: Annotated[str, Body()] = "",
                                          last_name: Annotated[str, Body()] = "",
@@ -59,19 +75,25 @@ class FastAPIWrapper:
                                         ) -> list[AddressBookRecord]:
         api_result = self.api.delete_matching_records(first_name, last_name, phone, email)
 
-        return api_result
+        match api_result.response_code:
+            case ResponseCode.OK:
+                return api_result.data
 
     def search_records_endpoint(self, first_name: Annotated[str, Body()] = "", last_name: Annotated[str, Body()] = "",
                                 phone: Annotated[str, Body()] = "", email: Annotated[str, Body()] = ""
                                 ) -> list[AddressBookRecord]:
         api_result = self.api.search_records(first_name, last_name, phone, email)
 
-        return api_result
+        match api_result.response_code:
+            case ResponseCode.OK:
+                return api_result.data
 
-    def list_records_endpoint(self):
+    def list_records_endpoint(self) -> list[AddressBookRecord]:
         api_result = self.api.list_records()
-
-        return api_result
+        
+        match api_result.response_code:
+            case ResponseCode.OK:
+                return api_result.data
 
 
 fast_api = FastAPIWrapper(ADDRESS_BOOK_FILE_PATH)
