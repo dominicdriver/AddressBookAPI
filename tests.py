@@ -53,6 +53,18 @@ class TestAPI(unittest.TestCase):
 
         self.assertIn(record_to_add, database_records)
 
+    def test_add_existing_record(self) -> None:
+        """
+        Tests that an existing record can not be added again
+        """
+        record_to_add = AddressBookRecord("Chesney", "Brown", "01913606138", "chesney.brown@corrie.co.uk")
+        self.api.add_record(record_to_add)
+        self.api.add_record(record_to_add)
+
+        database_records = self.read_records_from_database()
+
+        self.assertTrue(database_records.count(record_to_add) == 1)
+
     def test_add_multiple_records(self) -> None:
         """
         Tests that multiple records can be added to the database
@@ -86,6 +98,16 @@ class TestAPI(unittest.TestCase):
 
         self.assertIn(edited_record, records_after_edit)
         self.assertNotIn(record_to_edit, records_after_edit)
+
+    def test_edit_non_existing_record(self) -> None:
+        """
+        Tests that trying to edit a non-existing record
+        fails gracefully
+        """
+        non_existing_record = AddressBookRecord("", "", "", "")
+        api_response = self.api.edit_record(non_existing_record, new_phone="01545173738")
+
+        self.assertTrue(api_response)
 
     def test_delete_specific_record(self) -> None:
         """
@@ -145,6 +167,23 @@ class TestAPI(unittest.TestCase):
         found_records = self.api.search_records(first_name=search_first_name).data
 
         self.assertListEqual(test_records, found_records)
+
+    def test_search_multiple_records(self) -> None:
+        """
+        Tests that the database can be searched using multiple fields
+        """
+        search_first_name = "Jason"
+        search_last_name = "Smith"
+
+        test_records = [
+            AddressBookRecord("Jason", "Smith", "01354658717", "jason.smith@email.com"),
+            AddressBookRecord("Jason", "Smith", "01354658617", "jason.smith2@email.com")
+        ]
+
+        for record in test_records:
+            self.add_record_to_database(record)
+        
+        found_records = self.api.search_records(first_name=search_first_name, last_name=search_last_name).data
 
         self.assertListEqual(test_records, found_records)
 
