@@ -18,7 +18,9 @@ python -m venv VENV_NAME
 pip install -r requirements.txt
 ```
 
-Run `python app.py` to start the API
+Run `python app.py` to start the API.
+
+The API is accessible from the localhost on port 8000 (`127.0.0.1:8000`)
 
 ## Available Endpoints
 FastAPI autogenerates documentation for the different endpoints at `http://127.0.0.1:8000/docs`
