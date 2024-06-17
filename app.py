@@ -106,4 +106,4 @@ class FastAPIWrapper:
 fast_api = FastAPIWrapper(ADDRESS_BOOK_FILE_PATH)
 
 if __name__ == "__main__":
-    uvicorn.run(fast_api.app, host="0.0.0.0")
+    uvicorn.run(fast_api.app)
