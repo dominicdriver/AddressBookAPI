@@ -104,11 +104,15 @@ class AddressBookAPI:
         records = self.list_records()
         found_records = []
 
+        # If no search fields are specified, return an empty list
+        if first_name == "" and last_name == "" and phone == "" and email == "":
+            return []
+
         for record in records:
-            if (first_name == record.first_name
-                or last_name == record.last_name
-                or phone == record.phone
-                or email == record.email):
+            if ((first_name == "" or first_name == record.first_name)
+            and (last_name == "" or last_name == record.last_name)
+            and (phone == "" or phone == record.phone)
+            and (email == "" or email == record.email)):
 
                 found_records.append(record)
 
