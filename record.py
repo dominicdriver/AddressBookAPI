@@ -6,15 +6,18 @@ import json
 # From https://www.regular-expressions.info/email.html
 EMAIL_REGEX = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
+NAME_REGEX = r"^[a-zA-Z]+$"
+PHONE_REGEX = r"^\d+$"
+
 
 @dataclass
 class AddressBookRecord:
     """Holds information about an entry in the address book"""
 
     # The Field object is only used by FastAPI to generate examples in the documentation page 
-    first_name: Annotated[str, Field(examples=["David"]), StringConstraints(pattern=r"[a-zA-Z]+")]
-    last_name: Annotated[str, Field(examples=["Platt"]), StringConstraints(pattern=r"[a-zA-Z]+")]
-    phone: Annotated[str, Field(examples=["01913478234"]), StringConstraints(pattern=r"\d+")]
+    first_name: Annotated[str, Field(examples=["David"]), StringConstraints(pattern=NAME_REGEX)]
+    last_name: Annotated[str, Field(examples=["Platt"]), StringConstraints(pattern=NAME_REGEX)]
+    phone: Annotated[str, Field(examples=["01913478234"]), StringConstraints(pattern=PHONE_REGEX)]
     email: Annotated[str, Field(examples=["david.platt@corrie.co.uk"]), StringConstraints(pattern=EMAIL_REGEX)]
 
 

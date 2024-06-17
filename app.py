@@ -56,6 +56,9 @@ class FastAPIWrapper:
             case ResponseCode.NOT_FOUND:
                 return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,
                                     content={"msg": "Record not found"})
+            case ResponseCode.INVALID_FIELD:
+                return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                    content={"msg": f"Invalid value: {api_result.data}"})
             case ResponseCode.OK:
                 return api_result.data
 

@@ -1,14 +1,17 @@
-from record import AddressBookRecord, AddressBookRecordEncoder, AddressBookRecordDecoder
+from record import (AddressBookRecord, AddressBookRecordEncoder, AddressBookRecordDecoder,
+                    EMAIL_REGEX, NAME_REGEX, PHONE_REGEX)
 from enum import Enum, auto
 from typing import Optional
 from dataclasses import dataclass
 import json
+import re
 
 
 class ResponseCode(Enum):
     OK = auto()
     ALREADY_EXISTS = auto()
     NOT_FOUND = auto()
+    INVALID_FIELD = auto()
 
 
 @dataclass
@@ -46,10 +49,25 @@ class AddressBookAPI:
                     new_phone: str = "", new_email: str = "") -> Response:
         """
         Edits a record with the provided fields.
-        Returns the edited record on success, or an error if the record is not found
+        Returns the edited record on success,
+        or an error if the record is not found or a new field is invalid
         """
         records = self.list_records().data
 
+        # Check that any new field is valid, return an error if not
+        if new_first_name and not re.match(NAME_REGEX, new_first_name):
+            return Response(ResponseCode.INVALID_FIELD, new_first_name)
+
+        if new_last_name and not re.match(NAME_REGEX, new_last_name):
+            return Response(ResponseCode.INVALID_FIELD, new_last_name)
+        
+        if new_phone and not re.match(PHONE_REGEX, new_phone):
+            return Response(ResponseCode.INVALID_FIELD, new_phone)
+        
+        if new_email and not re.match(EMAIL_REGEX, new_email):
+            return Response(ResponseCode.INVALID_FIELD, new_email)
+
+        # Find the existing record and edit any specificed fields
         for record in records:
             if old_record == record:
                 if new_first_name:
