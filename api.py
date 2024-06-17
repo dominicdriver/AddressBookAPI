@@ -76,10 +76,10 @@ class AddressBookAPI:
         deleted_records = []
 
         for record in records:
-            if (first_name == record.first_name
-                or last_name == record.last_name
-                or phone == record.phone
-                or email == record.email):
+            if ((first_name == "" or first_name == record.first_name)
+            and (last_name == "" or last_name == record.last_name)
+            and (phone == "" or phone == record.phone)
+            and (email == "" or email == record.email)):
 
                 new_records.remove(record)
                 deleted_records.append(record)
