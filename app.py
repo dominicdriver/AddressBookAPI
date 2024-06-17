@@ -28,12 +28,16 @@ class FastAPIWrapper:
         self.app.add_api_route(ENDPOINTS["add_record"], endpoint=self.add_record_endpoint, methods=["POST"])
         self.app.add_api_route(ENDPOINTS["edit_record"], endpoint=self.edit_record_endpoint, methods=["POST"])
 
+        # DELETE is used as it matches what the endpoints are doing, however POST may fit better as
+        # it is not well defined whether DELETE requests should allow a (JSON) body or not
         self.app.add_api_route(ENDPOINTS["delete_specific_record"], endpoint=self.delete_specific_record_endpoint, methods=["DELETE"])
         self.app.add_api_route(ENDPOINTS["delete_matching_records"], endpoint=self.delete_matching_records_endpoint, methods=["DELETE"])
         
         self.app.add_api_route(ENDPOINTS["list_records"], endpoint=self.list_records_endpoint, methods=["GET"])
 
-        # Ideally this would use GET, but some web browsers do not allow GET requests with a (json) body
+        # GET could be used to better match what is the endpoint does,
+        # but the HTTP spec does not specify that GET requests accept a body
+        # and some web browsers do not allow GET with a (JSON) body
         self.app.add_api_route(ENDPOINTS["search_records"], endpoint=self.search_records_endpoint, methods=["POST"])
 
     def add_record_endpoint(self, record_to_add: AddressBookRecord) -> JSONResponse:
@@ -102,4 +106,4 @@ class FastAPIWrapper:
 fast_api = FastAPIWrapper(ADDRESS_BOOK_FILE_PATH)
 
 if __name__ == "__main__":
-    uvicorn.run(fast_api.app)
+    uvicorn.run(fast_api.app, host="0.0.0.0")
